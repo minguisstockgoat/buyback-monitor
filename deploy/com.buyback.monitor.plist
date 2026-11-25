@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  맥미니 launchd 설정. 아래 두 경로(__PROJECT__, __PYTHON__)를 실제 값으로 바꾼 뒤
+    cp deploy/com.buyback.monitor.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.buyback.monitor.plist
+  로 등록한다. 평일 20:40(체결·신청 공시 반영)과 08:30(전일 시세 반영)에 실행된다.
+  GitHub Pages 로 띄울 때는 ProgramArguments 끝에 <string>--push</string> 한 줄을 추가한다.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.buyback.monitor</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>__PYTHON__</string>
+    <string>__PROJECT__/run_daily.py</string>
+  </array>
+  <key>WorkingDirectory</key><string>__PROJECT__</string>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>20</integer><key>Minute</key><integer>40</integer></dict>
+    <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>20</integer><key>Minute</key><integer>40</integer></dict>
+    <dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>20</integer><key>Minute</key><integer>40</integer></dict>
+    <dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>20</integer><key>Minute</key><integer>40</integer></dict>
+    <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>20</integer><key>Minute</key><integer>40</integer></dict>
+    <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>8</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>8</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>8</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>8</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Weekday</key><integer>6</integer><key>Hour</key><integer>8</integer><key>Minute</key><integer>30</integer></dict>
+  </array>
+  <key>StandardOutPath</key><string>__PROJECT__/data/run.log</string>
+  <key>StandardErrorPath</key><string>__PROJECT__/data/run.log</string>
+</dict>
+</plist>
