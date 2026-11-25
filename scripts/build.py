@@ -345,6 +345,11 @@ def metrics(ep, ctx):
     adv_val = sum(x[2] for x in win20) / len(win20) if win20 else None
     adv_vol = sum(x[1] for x in win20) / len(win20) if win20 else None
 
+    def adv_n(n):                          # 최근 n거래일 평균 거래대금(원)
+        w = [cpx[d][2] for d in cal.between(cal.add(ref, -(n - 1)), ref) if d in cpx]
+        return sum(w) / len(w) if w else None
+    adv5, adv60 = adv_n(5), adv_n(60)
+
     def window(a, b):                      # ref 기준 a~b 거래일 전 구간 (0 = ref)
         return cal.between(cal.add(ref, -b), cal.add(ref, -a))
 
@@ -433,6 +438,7 @@ def metrics(ep, ctx):
         "remain_amt": r2(remain_amt / EOK) if remain_amt is not None else None, "remain_sh": remain_sh,
         "need_amt": r2(need_amt / EOK) if need_amt is not None else None, "need_vs_adv": need_vs_adv,
         "adv20": r2(adv_val / EOK) if adv_val else None,
+        "adv5": r2(adv5 / EOK) if adv5 else None, "adv60": r2(adv60 / EOK) if adv60 else None,
         "r5_share": r5_share, "r5_amt": r2(r5_amt / EOK), "fill5": fill5, "req_ratio": req_ratio,
         "next_req": next_req, "next_timing": nx_main["timing"] if nx_main else None,
         "prev_req": prev_req, "next_chg": next_chg, "limit": limit, "limit_use": limit_use,
