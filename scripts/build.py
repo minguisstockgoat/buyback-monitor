@@ -309,8 +309,13 @@ def metrics(ep, ctx):
                   and (lastx is None or D(x["date"]) >= lastx)
                   and (end is None or D(x["date"]) <= end + dt.timedelta(days=20))]
     end_reason, end_date = None, None
+    idle0 = cal.count(cal.add(lastx, 1), ref) if lastx and lastx < ref else 0
     if typ == "direct" and target_sh and cum_sh >= target_sh:
         end_reason, end_date = "수량 완료", lastx
+    elif (typ == "direct" and not partial and amt_progress is not None and amt_progress >= 99.5
+          and (ep.get("later") or idle0 >= 3)):
+        # 금액을 정해 놓고 사는 회사는 신고수량을 다 채우기 전에 예정 금액을 다 써서 끝난다
+        end_reason, end_date = "금액 소진", lastx
     elif typ == "direct" and bc_reports and not ep.get("later"):
         end_reason, end_date = "결과보고", lastx or D(bc_reports[0]["date"])
     elif term and term <= ref:
@@ -321,7 +326,6 @@ def metrics(ep, ctx):
         end_reason, end_date = "후속 프로그램 시작", lastx
     elif typ == "trust" and prog is None and lastx and cal.count(lastx, ref) > 20:
         end_reason, end_date = "주문 중단", lastx
-    idle0 = cal.count(cal.add(lastx, 1), ref) if lastx and lastx < ref else 0
     if (not end_reason and typ == "trust" and progress is not None and progress >= 97 and idle0 >= 3
             and not orders.get((next_day.isoformat() if next_day else "", code, "신탁"))):
         end_reason, end_date = "금액 소진", lastx
@@ -363,7 +367,9 @@ def metrics(ep, ctx):
     nx = [orders.get((next_day.isoformat(), c, "직접" if typ == "direct" else "신탁")) for c in codes] \
         if next_day else []
     nx_main = orders.get((next_day.isoformat(), code, "직접" if typ == "direct" else "신탁")) if next_day else None
-    next_req = nx_main["req"] if nx_main else (0 if next_day else None)
+    if status == "ended":                  # 끝난 프로그램에 후속 프로그램의 주문이 붙지 않게 한다
+        nx_main = None
+    next_req = nx_main["req"] if nx_main else (0 if next_day and status != "ended" else None)
     prev_req = day[ref]["req"] if ref in day else 0
     next_chg = pct(next_req - prev_req, prev_req) if prev_req and next_req is not None else None
     limit = (prog.get("daily_limit_estk" if ep["is_pref"] else "daily_limit_ostk") if prog and typ == "direct" else None)
@@ -543,9 +549,10 @@ def main():
 
     ctx = {"cal": cal, "ref": ref, "px": px, "last": last, "orders": orders, "reports": reports,
            "data_start": data_start, "next_day": next_day, "cmap": cmap}
-    if (OUT / "p").exists():
-        shutil.rmtree(OUT / "p")
-    (OUT / "p").mkdir(parents=True)
+    # 폴더째 지우면 동기화 프로그램이나 로컬 서버가 폴더를 잡고 있을 때 실패하므로 파일만 지운다
+    (OUT / "p").mkdir(parents=True, exist_ok=True)
+    for f in (OUT / "p").glob("*.json"):
+        f.unlink()
     active, ended, seen = [], [], set()
     for ep in eps:
         if not ep["rows"] and not ep["prog"]:
