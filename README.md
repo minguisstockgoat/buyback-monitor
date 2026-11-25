@@ -44,15 +44,17 @@ python scripts/build.py
 
 ## 맥미니로 옮기기
 
-1. 폴더 전체(`data/` 포함)를 맥미니로 복사한다. OneDrive 동기화, AirDrop, `scp`, git 어느 쪽이든 된다.
-2. `pip3 install requests` 후 `.env` 에 키 두 개를 적는다.
-3. `python3 run_daily.py` 로 한 번 돌려 본다.
-4. `deploy/com.buyback.monitor.plist` 의 `__PROJECT__`, `__PYTHON__` 을 실제 경로로 바꿔 `~/Library/LaunchAgents/` 에 넣고 `launchctl load` 한다. 평일 20:40과 다음 날 08:30에 실행된다.
+라이브 주소: https://minguisstockgoat.github.io/buyback-monitor/ (저장소 `minguisstockgoat/buyback-monitor`, Pages 소스 `main` 의 `docs/`)
 
-화면을 보는 방법은 둘 중 하나다.
+수집한 자료(`data/`)가 저장소에 들어 있으므로 clone 하면 그대로 이어서 돌릴 수 있다.
 
-- GitHub Pages: 저장소를 만들고 Pages 소스를 `docs/` 로 지정한 뒤 plist 에 `--push` 를 추가한다. 맥미니가 매일 갱신분을 올린다.
-- 맥미니에서 직접 서빙: `python3 -m http.server 8765 --directory docs` 를 상시 띄워 두고 같은 네트워크에서 접속한다.
+1. `git clone https://github.com/minguisstockgoat/buyback-monitor.git`
+2. `pip3 install requests`
+3. 프로젝트 루트에 `.env` 를 만들고 `DART_API_KEY`, `KRX_API_KEY` 를 적는다(저장소에는 올라가지 않는다).
+4. `python3 run_daily.py --push` 로 한 번 돌려 본다. 푸시가 되려면 맥미니에 GitHub 인증(`gh auth login` 등)이 되어 있어야 한다.
+5. `deploy/com.buyback.monitor.plist` 의 `__PROJECT__`, `__PYTHON__` 을 실제 경로로 바꿔 `~/Library/LaunchAgents/` 에 넣고 `launchctl load` 한다. 평일 20:40과 다음 날 08:30에 실행된다.
+
+맥미니로 옮긴 뒤에는 노트북에서 같은 저장소로 푸시하지 않는다. 두 곳에서 `data/` 를 따로 갱신하면 충돌이 난다.
 
 ## 파일 구성
 
