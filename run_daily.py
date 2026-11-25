@@ -41,6 +41,8 @@ def main():
     load_env()
     print(f"[{dt.datetime.now():%Y-%m-%d %H:%M}] 자사주 매입 모니터 갱신", flush=True)
     fails = []
+    if "--push" in sys.argv:              # 다른 곳에서 올린 갱신분을 먼저 받는다
+        subprocess.run(["git", "pull", "-q", "--rebase", "--autostash"], cwd=ROOT)
     if step("KIND 신청·체결", "kind.py", "--days", "10"):
         fails.append("kind")
     elif "--backfill" in sys.argv:        # 과거분을 조금씩 채운다(요청 제한 때문에 한 번에 200건)
