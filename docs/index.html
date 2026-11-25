@@ -81,6 +81,9 @@ th,td{padding:11px 9px;text-align:right;white-space:nowrap;border-bottom:1px sol
 th:first-child,td:first-child{padding-left:20px}
 th:last-child,td:last-child{padding-right:20px}
 thead th{color:var(--muted);font-size:12.5px;font-weight:500;user-select:none;padding-top:14px;padding-bottom:10px}
+tr.grp th{padding:12px 9px 0;border-bottom:0;font-size:11.5px;letter-spacing:.02em;color:var(--muted)}
+tr.grp+tr th{padding-top:4px}
+table.act tr.grp th:not(:first-child),table.act tr:not(.grp)>:is(:nth-child(3),:nth-child(5),:nth-child(7),:nth-child(12)){border-left:1px solid var(--line);padding-left:14px}
 thead th[data-k]{cursor:pointer}
 thead th[data-k]:hover{color:var(--ink2)}
 th[aria-sort]{color:var(--ink)}
@@ -173,6 +176,7 @@ details.defs b{color:var(--ink);font-weight:500}
   .x{display:none}.fold{display:flex}
   th,td{padding:10px 8px}th:first-child,td:first-child{padding-left:14px}th:last-child,td:last-child{padding-right:14px}
   .pg{min-width:96px;gap:6px}.pv{width:40px}
+  table.act tr:not(.grp)>*{border-left:0!important;padding-left:8px!important}table.act tr:not(.grp)>:first-child{padding-left:14px!important}
   .nm{white-space:normal}
   input[type=search]{flex:1;min-width:140px}.sp{display:none}
   .kpis{grid-template-columns:repeat(2,1fr)}.kpi{padding:14px 16px 12px}.kpi .v{font-size:24px}
@@ -227,12 +231,12 @@ details.defs b{color:var(--ink);font-weight:500}
     <ul>
       <li><b>일별 신청·체결</b>: 한국거래소가 KIND에 매일 올리는 「자기주식매매 신청내역」과 「체결내역」 공시가 원본이다. 체결내역은 당일 저녁, 신청내역은 다음 거래일에 낼 주문을 전날 저녁에 공시한다.</li>
       <li><b>진행률</b>: 직접취득은 거래소가 공시하는 누적체결량 ÷ 신고수량이다. 신탁은 거래소가 누계를 주지 않으므로, 계약 시작일 이후 체결금액을 더한 값 ÷ 계약금액으로 계산한다. 신탁은 계약금액을 다 쓰지 않고 끝나는 경우가 있다. 숫자 뒤에 +가 붙으면 수집 시작일 이전 체결분이 빠져 있어 실제 값이 그보다 크다는 뜻이다.</li>
-      <li><b>시간 경과</b>: 취득기간(신탁은 계약기간) 전체 거래일 중 지나간 거래일의 비율이다. 진행률 막대 위 세로선이 이 값이다. <b>격차</b>는 진행률 − 시간 경과(%p)이며, 음수면 기간에 비해 매입이 늦다는 뜻이다.</li>
-      <li><b>일 필요액</b>: 잔여 금액 ÷ 남은 거래일. 남은 기간에 하루 평균 사야 하는 금액이다. 직접취득의 잔여 금액은 잔여 수량 × 최근 종가다.</li>
-      <li><b>거래대금·대금 대비</b>: 거래대금은 표 위에서 고른 기간(5·20·60거래일)의 하루 평균 거래대금이다. 대금 대비는 일 필요액 ÷ 평균 거래대금이고, 잔여 아래의 "대금 N일치"는 잔여 금액 ÷ 평균 거래대금이다. 상태 표시는 기간 선택과 무관하다.</li>
+      <li><b>기간 경과</b>: 취득기간(신탁은 계약기간) 전체 거래일 중 지나간 거래일의 비율이다. 진행률 막대 위 세로선이 이 값이다. <b>기간 대비</b>는 진행률 − 기간 경과(%p)이며, 음수면 기간에 비해 매입이 늦다는 뜻이다.</li>
+      <li><b>하루 필요액</b>: 남은 금액 ÷ 남은 거래일. 남은 기간에 하루 평균 사야 하는 금액이다. 직접취득의 남은 금액은 남은 수량 × 최근 종가다.</li>
+      <li><b>거래대금·대금 대비</b>: 거래대금은 표 위에서 고른 기간(5·20·60거래일)의 하루 평균 거래대금이다. 대금 대비는 하루 필요액 ÷ 평균 거래대금이고, 남은 금액 아래의 "대금 N일치"는 남은 금액 ÷ 평균 거래대금이다. 상태 표시는 기간 선택과 무관하다.</li>
       <li><b>5일 비중</b>: 최근 5거래일 자사주 체결수량 ÷ 같은 기간 전체 거래량.</li>
-      <li><b>예상 완료</b>: 최근 5거래일 평균 체결금액을 유지한다고 가정했을 때 잔여 금액을 다 채우는 날이다. 여유는 기한까지 남는 거래일 수다.</li>
-      <li><b>상태 표시</b>: 신청 증가(최근 5일 평균 신청수량이 직전 20일의 1.5배 이상), 신청 감소(0.6배 이하), 뒤처짐(시간 경과 30% 이상인데 격차 −20%p 이하), 기한 임박(남은 10거래일 이하·진행률 90% 미만), 종료 임박(진행률 90% 이상 또는 현 속도로 5거래일 안에 완료), 주문 중단(5거래일 이상 체결이 없고 다음 신청도 없음), 미개시(결정 공시 후 체결 없음), 이력 부족(수집 시작일 이전에 시작해 누계를 알 수 없음).</li>
+      <li><b>예상 완료</b>: 최근 5거래일 평균 체결금액을 유지한다고 가정했을 때 남은 금액을 다 채우는 날이다. 여유는 기한까지 남는 거래일 수다.</li>
+      <li><b>상태 표시</b>: 매입 느림(기간은 30% 넘게 지났는데 진행률이 기간 경과보다 20%p 이상 낮음), 기한 임박(남은 10거래일 이하·진행률 90% 미만), 신청 증가(최근 5일 평균 신청수량이 그 전 20일의 1.5배 이상), 신청 감소(0.6배 이하), 매입 멈춤(5거래일 넘게 체결이 없고 다음 신청도 없음), 완료 임박(진행률 90% 이상 또는 지금 속도로 5거래일 안에 완료), 신규(첫 체결 뒤 5거래일 이내), 시작 전(결정 공시 뒤 체결 없음), 이력 부족(수집 시작일 이전에 시작해 누계를 알 수 없음). 칩에 마우스를 올리면 기준이 나온다.</li>
       <li><b>프로그램 정보</b>: 취득 예정 금액·기간·목적·1일 주문한도는 DART 주요사항보고서(자기주식 취득 결정, 신탁계약 체결·해지 결정)에서 가져온다. 주가·거래량·시가총액은 KRX OPEN API 일별매매정보다.</li>
     </ul>
   </details>
@@ -251,8 +255,12 @@ const S=(v,d=1)=>v==null?'–':(v>0?'+':'')+N(v,d);
 const md=s=>s?s.slice(5).replace('-','/'):'–';
 const ymd=s=>s?s.slice(2).replaceAll('-','.'):'–';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const TAGCLS={'기한 임박':'hot','뒤처짐':'warn','주문 중단':'bad','신청 증가':'acc','신규':'acc','종료 임박':'ink','미개시':'','신청 감소':'','이력 부족':''};
-const TAGS=['기한 임박','뒤처짐','신청 증가','종료 임박','신규','미개시','신청 감소','주문 중단'];
+const TAGCLS={'기한 임박':'hot','매입 느림':'warn','매입 멈춤':'bad','신청 증가':'acc','신규':'acc','완료 임박':'ink','시작 전':'','신청 감소':'','이력 부족':''};
+const TAGTIP={'기한 임박':'남은 기간이 10거래일 이하인데 진행률이 90%에 못 미침','매입 느림':'기간은 30% 넘게 지났는데 진행률이 기간 경과보다 20%p 이상 낮음',
+ '신청 증가':'최근 5일 평균 신청수량이 그 전 20일 평균의 1.5배 이상','완료 임박':'진행률이 90% 이상이거나, 지금 속도면 5거래일 안에 다 채움','신규':'첫 체결 뒤 5거래일 이내',
+ '시작 전':'결정 공시는 났지만 아직 체결이 없음','신청 감소':'최근 5일 평균 신청수량이 그 전 20일 평균의 0.6배 이하','매입 멈춤':'5거래일 넘게 체결이 없고 다음 거래일 신청도 없음',
+ '이력 부족':'수집 시작일 이전에 시작해 누계를 알 수 없음'};
+const TAGS=['기한 임박','매입 느림','신청 증가','신청 감소','매입 멈춤','완료 임박','신규','시작 전'];
 const FK={start:['매입 시작','acc'],new:['신규 결정','acc'],up:['신청 증가','acc'],resume:['신청 재개','acc'],down:['신청 감소',''],stop:['신청 없음','bad'],end:['종료','ink']};
 let DB=null, ST={tab:'active',q:'',type:'',cap:2000,adv:20,cancel:false,tags:new Set(),sort:{active:['mktcap',-1],ended:['end_date',-1]}};
 
@@ -274,10 +282,10 @@ function init(){
   applyTheme();
   $('#theme').onclick=()=>{theme=TH[(TH.indexOf(theme)+1)%3];try{localStorage.setItem('bb-theme',theme)}catch(e){}applyTheme();if($('#dlg').open)route()};
   $('#kpis').append(
-    kpi('진행 중',N(m.n_active),'건',`미개시 ${N(m.n_notstarted)}건`,'매입이 진행 중인 프로그램 수. 결정 공시 뒤 아직 체결이 없는 프로그램은 미개시로 따로 센다'),
+    kpi('진행 중',N(m.n_active),'건',`시작 전 ${N(m.n_notstarted)}건`,'매입이 진행 중인 프로그램 수. 결정 공시 뒤 아직 체결이 없는 프로그램은 시작 전으로 따로 센다'),
     kpi(`${md(m.ref)} 체결`,...split(m.day_amt),`${N(m.day_count)}종목`,`이날 자사주 체결금액 합계 ${N(m.day_amt)}억`),
     kpi(`${md(m.next_day)} 신청`,N(m.next_count),'종목','다음 거래일','다음 거래일에 자사주 매수 주문을 내겠다고 신청한 종목 수'),
-    kpi('잔여 매입 예정액',...split(m.remain_amt),'진행 중·미개시',`앞으로 사야 하는 금액 합계 ${N(m.remain_amt)}억`),
+    kpi('남은 매입 예정액',...split(m.remain_amt),'진행 중·시작 전',`앞으로 사야 하는 금액 합계 ${N(m.remain_amt)}억`),
     kpi('최근 종료',N(m.n_ended),'건','40거래일','최근 40거래일 안에 끝난 프로그램 수'));
   $('#tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;ST.tab=b.dataset.tab;[...$('#tabs').children].forEach(x=>x.setAttribute('aria-selected',x===b));render()};
   $('#ftype').onclick=e=>{const b=e.target.closest('button');if(!b)return;ST.type=b.dataset.v;[...$('#ftype').children].forEach(x=>x.setAttribute('aria-pressed',x===b));render()};
@@ -291,7 +299,7 @@ function init(){
   window.addEventListener('hashchange',route);
   render();route();
 }
-/* 선택한 기간의 평균 거래대금과, 그에 견준 일 필요액·잔여 */
+/* 선택한 기간의 평균 거래대금과, 그에 견준 하루 필요액·남은 금액 */
 const adv=p=>p['adv'+ST.adv];
 const needVs=p=>p.need_amt!=null&&adv(p)?p.need_amt/adv(p)*100:null;
 const remDays=p=>p.remain_amt!=null&&adv(p)?p.remain_amt/adv(p):null;
@@ -329,14 +337,14 @@ function render(){
 function renderChips(){
   const base=DB.programs.filter(p=>passBase(p,true)&&capOk(p));
   $('#ftags').innerHTML=TAGS.map(t=>{const n=base.filter(p=>p.tags.includes(t)).length;
-    return `<button class="chip${n?'':' zero'}" data-t="${t}" aria-pressed="${ST.tags.has(t)}"><i class="dot ${TAGCLS[t]}"></i>${t}<span class="c">${n}</span></button>`}).join('');
+    return `<button class="chip${n?'':' zero'}" data-t="${t}" data-tip="${TAGTIP[t]}" aria-pressed="${ST.tags.has(t)}"><i class="dot ${TAGCLS[t]}"></i>${t}<span class="c">${n}</span></button>`}).join('');
 }
-const tagHtml=p=>p.tags.map(t=>`<span class="st ${TAGCLS[t]||''}">${t}</span>`).join('');
+const tagHtml=p=>p.tags.map(t=>`<span class="st ${TAGCLS[t]||''}"${TAGTIP[t]?` data-tip="${TAGTIP[t]}"`:''}>${t}</span>`).join('');
 function nameCell(p){return `<td class="l"><span class="nm">${esc(p.name)}</span><small>${p.code} · ${p.type==='direct'?'직접':'신탁'}${p.cancel?' · 소각':''}</small><div class="tags fold">${tagHtml(p)}</div></td>`}
-function pgCell(p){
-  const v=p.progress, t=p.time_pct, late=p.tags.includes('뒤처짐')||p.tags.includes('기한 임박');
-  const tip=`진행률 ${P(v)} · 시간 경과 ${P(t)}${p.type==='direct'&&p.amt_progress!=null?' · 금액 기준 '+P(p.amt_progress):''}${p.partial?' · 수집 시작일 이전 체결분 제외':''}`;
-  return `<td><div class="pg" data-tip="${esc(tip)}"><div class="pgb${late?' warn':''}"><i style="width:${Math.min(v||0,100)}%"></i>${t!=null?`<b style="left:calc(${Math.min(t,100)}% - 1px)"></b>`:''}</div><span class="pv">${v==null?'–':N(v,0)+'%'+(p.partial?'+':'')}</span></div></td>`}
+function pgCell(p,showTime){
+  const v=p.progress, t=p.time_pct, late=p.tags.includes('매입 느림')||p.tags.includes('기한 임박');
+  const tip=`산 비율 ${P(v)} · 지나간 기간 ${P(t)}${p.type==='direct'&&p.amt_progress!=null?' · 금액 기준 '+P(p.amt_progress):''}${p.partial?' · 수집 시작일 이전 체결분 제외':''}`;
+  return `<td><div class="pg" data-tip="${esc(tip)}"><div class="pgb${late?' warn':''}"><i style="width:${Math.min(v||0,100)}%"></i>${t!=null?`<b style="left:calc(${Math.min(t,100)}% - 1px)"></b>`:''}</div><span class="pv">${v==null?'–':N(v,0)+'%'+(p.partial?'+':'')}</span></div>${showTime&&t!=null?`<small>기간 ${N(t,0)}%</small>`:''}</td>`}
 function spark(p){
   const a=p.spark, mx=Math.max(1,...a.map(x=>Math.max(x[0],x[1]))), w=5, g=1.5, H=26;
   let s='';a.forEach((x,i)=>{const hr=x[0]/mx*H, he=x[1]/mx*H, X=i*(w+g);
@@ -346,24 +354,27 @@ function spark(p){
 /* [정렬 키, 이름, 설명(툴팁), 클래스]  x = 좁은 화면에서 숨기는 열 */
 const COLS={
  active:[
-  ['name','종목','','l'],[null,'상태','','l x'],['mktcap','시총','시가총액','x'],['target_amt','규모','취득 예정 금액. 아래는 시가총액 대비 비율','x'],
-  ['progress','진행률','직접취득은 누적체결량 ÷ 신고수량, 신탁은 계약 시작 뒤 체결금액 ÷ 계약금액. 세로선은 기간 중 지나간 거래일의 비율','pgc'],
-  ['gap','격차','진행률 − 시간 경과(%p). 음수면 기간에 비해 매입이 늦다','x'],['remain_amt','잔여','남은 매입 금액. 아래는 평균 거래대금 며칠치인지','x'],
+  ['name','종목','','l'],[null,'상태','','l x'],['mktcap','시총','시가총액','x'],['target_amt','매입 규모','취득 예정 금액. 아래는 시가총액 대비 비율','x'],
+  ['progress','진행률','예정한 물량 중 지금까지 산 비율. 직접취득은 누적체결량 ÷ 신고수량, 신탁은 체결금액 합 ÷ 계약금액. 세로선과 아래 숫자는 기간이 얼마나 지났는지','pgc'],
+  ['gap','기간 대비','진행률 − 기간 경과. 음수면 지나간 기간에 비해 덜 샀다는 뜻','x'],['remain_amt','남은 금액','앞으로 사야 하는 금액. 아래는 평균 거래대금 며칠치인지','x'],
   ['td_left','남은 기한','남은 거래일과 종료일',''],
-  ['need_amt','일 필요액','잔여 금액 ÷ 남은 거래일. 남은 기간에 하루 평균 사야 하는 금액','x'],
+  ['need_amt','하루 필요액','남은 금액 ÷ 남은 거래일. 기한까지 다 채우려면 하루 평균 사야 하는 금액','x'],
   ['adv','거래대금','선택한 기간(5·20·60거래일)의 하루 평균 거래대금','x'],
-  ['need_vs','대금 대비','일 필요액 ÷ 평균 거래대금. 막대는 100%를 가득 찬 것으로 그린다','x'],
-  ['r5_share','5일 비중','최근 5거래일 자사주 체결수량 ÷ 전체 거래량','x'],
+  ['need_vs','대금 대비','하루 필요액 ÷ 평균 거래대금. 막대는 100%를 가득 찬 것으로 그린다','x'],
+  ['r5_share','5일 매입 비중','최근 5거래일 자사주 체결수량 ÷ 전체 거래량','x'],
   [null,'최근 20일','일별 신청(옅은 색)과 체결(진한 색) 수량','x'],
   ['next_req','다음 신청','다음 거래일 신청수량. 아래는 직전 신청 대비 증감','x'],
-  ['slack','예상 완료','최근 5거래일 평균 체결금액을 유지할 때 잔여를 다 채우는 날. 아래는 기한까지 남는 거래일','x']],
+  ['slack','예상 완료','최근 5거래일 평균 체결금액을 유지할 때 남은 금액을 다 채우는 날. 아래는 기한까지 남는 거래일','x']],
  ended:[
   ['name','종목','','l'],['mktcap','시총','시가총액','x'],['end_date','종료일','',''],['progress','최종 진행률','','pgc'],['cum_amt','누적 매입','아래는 예정 금액','x'],
   ['prog_share','기간 중 비중','매입 기간 전체 거래량 대비 자사주 체결 비중','x'],['td_since_end','종료 후','종료 뒤 지난 거래일','x'],
   ['ret_end','종료 후 주가','마지막 매입일(또는 기한일) 종가 대비 최근 종가',''],['avg_price','평균 매입단가','아래는 최근 종가와의 차이','x']]};
+/* 진행 중 표의 열 묶음: [이름, 열 수] */
+const GROUPS=[['',2],['프로그램',2],['지금까지',2],['앞으로',5],['최근 흐름',4]];
 function head(kind){
   const [k,dir]=ST.sort[kind];
-  return '<thead><tr>'+COLS[kind].map(c=>`<th class="${c[3]}" ${c[0]?`data-k="${c[0]}"`:''} ${c[2]?`data-tip="${esc(c[2])}"`:''} ${c[0]===k?`aria-sort="${dir<0?'descending':'ascending'}"`:''}>${c[1]}</th>`).join('')+'</tr></thead>'}
+  const grp=kind==='active'?'<tr class="grp x">'+GROUPS.map(g=>`<th class="l" colspan="${g[1]}">${g[0]}</th>`).join('')+'</tr>':'';
+  return '<thead>'+grp+'<tr>'+COLS[kind].map(c=>`<th class="${c[3]}" ${c[0]?`data-k="${c[0]}"`:''} ${c[2]?`data-tip="${esc(c[2])}"`:''} ${c[0]===k?`aria-sort="${dir<0?'descending':'ascending'}"`:''}>${c[1]}</th>`).join('')+'</tr></thead>'}
 function sorted(list,kind){
   const [k,dir]=ST.sort[kind];
   const g=GET[k]||(p=>p[k]);
@@ -376,15 +387,15 @@ function bindTable(kind){
 const delta=ch=>ch==null?'':ch===0?'±0%':`${ch>0?'▲':'▼'} ${N(Math.abs(ch),0)}%`;
 function renderActive(){
   const rows=sorted(DB.programs.filter(pass),'active');
-  let h=`<table>${head('active')}<tbody>`;
+  let h=`<table class="act">${head('active')}<tbody>`;
   for(const p of rows){
     const nx=p.next_req, ch=p.next_chg, lag=p.gap!=null&&p.gap<=-20, nv=needVs(p), rd=remDays(p);
     h+=`<tr data-id="${p.id}">${nameCell(p)}
 <td class="l x"><div class="tags">${tagHtml(p)}</div></td>
 <td class="x">${A(p.mktcap)}</td>
 <td class="x">${A(p.target_amt)}<small>${P(p.target_vs_cap,1)}</small></td>
-${pgCell(p)}
-<td class="x${lag?' wt':''}">${p.gap==null?'–':S(p.gap,0)}</td>
+${pgCell(p,true)}
+<td class="x${lag?' wt':''}">${p.gap==null?'–':S(p.gap,0)+'<span class="u">%p</span>'}</td>
 <td class="x">${A(p.remain_amt)}<small>${rd==null||!p.remain_amt?'&nbsp;':'대금 '+N(rd,rd<10?1:0)+'일치'}</small></td>
 <td>${N(p.td_left)}<span class="u">일</span><small>~${md(p.end)}${p.end_est?' 추정':''}</small></td>
 <td class="x">${p.need_amt==null?'–':A(p.need_amt)}</td>
@@ -396,7 +407,7 @@ ${pgCell(p)}
 <td class="x">${p.est_finish?md(p.est_finish):'–'}<small>${p.slack==null?'&nbsp;':p.slack>=0?'여유 '+N(p.slack)+'일':'<span class="wt">부족 '+N(-p.slack)+'일</span>'}</small></td></tr>`}
   h+='</tbody></table>';
   $('#view').innerHTML=rows.length?h:`<div class="empty">조건에 맞는 프로그램이 없습니다.${elsewhere()}</div>`;
-  $('#legend').innerHTML=`<span>${rows.length}건</span>${capNote(DB.programs)}<span><i class="sw"></i>진행률·체결</span><span><i class="sw p"></i>신청</span><span><i class="sw t"></i>시간 경과</span>`;
+  $('#legend').innerHTML=`<span>${rows.length}건</span>${capNote(DB.programs)}<span><i class="sw"></i>진행률·체결</span><span><i class="sw p"></i>신청</span><span><i class="sw t"></i>기간 경과</span>`;
   bindTable('active');
 }
 function renderEnded(){
@@ -448,10 +459,10 @@ async function openDetail(id){
 <div class="db">
 <div class="stats">
 ${kv('진행률',P(p.progress)+(p.partial?'+':''),p.type==='direct'?`${N(p.cum_sh)} / ${N(p.target_sh)}주`:`${At(p.cum_amt)} / ${At(p.target_amt)}`)}
-${kv('시간 경과',P(p.time_pct),`격차 ${p.gap==null?'–':S(p.gap,0)+'%p'} · 남은 ${N(p.td_left)}거래일`)}
+${kv('기간 경과',P(p.time_pct),`진행률이 기간보다 ${p.gap==null?'–':S(p.gap,0)+'%p'} · 남은 ${N(p.td_left)}거래일`)}
 ${kv('누적 매입',A(p.cum_amt),p.target_amt?`예정 ${At(p.target_amt)}${p.type==='direct'&&p.amt_progress!=null?' · 금액 기준 '+P(p.amt_progress,0):''}`:'')}
-${kv('잔여',A(p.remain_amt),`${p.remain_sh!=null?`약 ${N(p.remain_sh)}주`:''}${remDays(p)!=null&&p.remain_amt?` · 거래대금 ${N(remDays(p),remDays(p)<10?1:0)}일치`:''}`)}
-${kv('일 필요액',A(p.need_amt),`${ST.adv}일 평균 거래대금 ${At(adv(p))}의 ${P(needVs(p))}`)}
+${kv('남은 금액',A(p.remain_amt),`${p.remain_sh!=null?`약 ${N(p.remain_sh)}주`:''}${remDays(p)!=null&&p.remain_amt?` · 거래대금 ${N(remDays(p),remDays(p)<10?1:0)}일치`:''}`)}
+${kv('하루 필요액',A(p.need_amt),`${ST.adv}일 평균 거래대금 ${At(adv(p))}의 ${P(needVs(p))}`)}
 ${kv('최근 5일 일평균',A(p.r5_amt),`거래량의 ${P(p.r5_share)} · 체결률 ${P(p.fill5,0)}`)}
 ${kv('다음 거래일 신청',p.next_req==null?'–':p.next_req?N(p.next_req)+'<span class="u">주</span>':'없음',`${p.next_timing||''}${p.limit?`${p.next_timing?' · ':''}1일 한도 ${N(p.limit)}주${p.limit_use!=null?'의 '+P(p.limit_use,0):''}`:''}`)}
 ${kv('평균 매입단가',N(p.avg_price),p.close?`최근 종가 ${N(p.close)}${p.ret_start!=null?' · 시작 후 '+S(p.ret_start)+'%':''}`:'')}

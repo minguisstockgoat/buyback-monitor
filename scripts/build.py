@@ -325,7 +325,7 @@ def metrics(ep, ctx):
     elif ep.get("later"):                  # 같은 종목에 더 새 프로그램이 시작됨
         end_reason, end_date = "후속 프로그램 시작", lastx
     elif typ == "trust" and prog is None and lastx and cal.count(lastx, ref) > 20:
-        end_reason, end_date = "주문 중단", lastx
+        end_reason, end_date = "매입 멈춤", lastx
     if (not end_reason and typ == "trust" and progress is not None and progress >= 97 and idle0 >= 3
             and not orders.get((next_day.isoformat() if next_day else "", code, "신탁"))):
         end_reason, end_date = "금액 소진", lastx
@@ -397,7 +397,7 @@ def metrics(ep, ctx):
         tags.append("이력 부족")
         progress = amt_progress = gap = remain_amt = need_amt = need_vs_adv = None
     if status == "notstarted":
-        tags.append("미개시")
+        tags.append("시작 전")
     if status == "active":
         if first and cal.count(first, ref) <= 5 and not partial:
             tags.append("신규")
@@ -406,12 +406,12 @@ def metrics(ep, ctx):
         if req_ratio is not None and req_ratio <= 0.6 and rq5 > 0:
             tags.append("신청 감소")
         if progress is not None and (progress >= 90 or (slack is not None and est_finish and cal.count(cal.add(ref, 1), est_finish) <= 5)):
-            tags.append("종료 임박")
+            tags.append("완료 임박")
         if idle >= 5 and not next_req and rows:
-            tags.append("주문 중단")
+            tags.append("매입 멈춤")
     if status in ("active", "notstarted") and not no_hist:
         if gap is not None and gap <= -20 and (time_pct or 0) >= 30:
-            tags.append("뒤처짐")
+            tags.append("매입 느림")
         if 0 < td_left <= 10 and (progress or 0) < 90:
             tags.append("기한 임박")
 
