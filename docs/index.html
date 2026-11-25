@@ -196,13 +196,26 @@ function init(){
 }
 function tile(k,v,u,n){return el('div','tile',`<div class="k">${k}</div><div class="v">${v}<small>${u}</small></div><div class="n">${n}</div>`)}
 function all(){return DB.programs.concat(DB.ended)}
-function pass(p){
+function passBase(p){
   if(ST.q&&!(p.name.toLowerCase().includes(ST.q)||p.code.includes(ST.q)))return false;
   if(ST.type&&p.type!==ST.type)return false;
-  if(ST.cap&&(p.mktcap||0)<ST.cap)return false;
   if(ST.cancel&&!p.cancel)return false;
   if(ST.tab==='active'&&ST.tags.size&&![...ST.tags].every(t=>p.tags.includes(t)))return false;
   return true;
+}
+/* 종목을 검색할 때는 시총 하한을 적용하지 않는다(소형주가 검색에서 빠지지 않도록) */
+function pass(p){return passBase(p)&&(!!ST.q||!ST.cap||(p.mktcap||0)>=ST.cap)}
+function capNote(list){
+  if(!ST.cap)return '';
+  if(ST.q)return '<span>검색 중에는 시총 하한을 적용하지 않습니다</span>';
+  const n=list.filter(passBase).length-list.filter(pass).length;
+  return n?`<span>시총 ${$('#fcap').selectedOptions[0].text.replace(' 이상','')} 미만 ${n}건은 숨겨져 있습니다</span>`:'';
+}
+/* 검색어가 다른 탭에만 걸릴 때 어디에 있는지 알려 준다 */
+function elsewhere(){
+  if(!ST.q)return '';
+  const a=ST.tab==='active'?DB.ended.filter(pass).length:0, b=ST.tab==='ended'?DB.programs.filter(pass).length:0;
+  return a?` '최근 종료' 탭에 ${a}건이 있습니다.`:b?` '진행 중' 탭에 ${b}건이 있습니다.`:'';
 }
 function render(){
   $('#tagbar').style.display=ST.tab==='active'?'':'none';
@@ -257,8 +270,8 @@ ${pgCell(p)}
 <td>${p.est_finish?md(p.est_finish):'–'}<small>${p.slack==null?'&nbsp;':p.slack>=0?'여유 '+N(p.slack)+'일':'부족 '+N(-p.slack)+'일'}</small></td>
 ${tagsCell(p)}</tr>`}
   h+='</tbody></table>';
-  $('#view').innerHTML=rows.length?h:'<div class="empty">조건에 맞는 프로그램이 없습니다.</div>';
-  $('#legend').innerHTML=`<span>${rows.length}건 표시</span><span><i class="sw"></i>진행률·체결수량</span><span><i class="sw l"></i>신청수량</span><span><i class="sw t"></i>시간 경과</span><span>행을 누르면 일별 내역이 열립니다</span>`;
+  $('#view').innerHTML=rows.length?h:`<div class="empty">조건에 맞는 프로그램이 없습니다.${elsewhere()}</div>`;
+  $('#legend').innerHTML=`<span>${rows.length}건 표시</span>${capNote(DB.programs)}<span><i class="sw"></i>진행률·체결수량</span><span><i class="sw l"></i>신청수량</span><span><i class="sw t"></i>시간 경과</span><span>행을 누르면 일별 내역이 열립니다</span>`;
   bindTable('active');
 }
 function renderEnded(){
@@ -276,8 +289,8 @@ ${pgCell(p)}
 <td class="${p.ret_end>0?'up':p.ret_end<0?'down':''}">${p.ret_end==null?'–':S(p.ret_end)+'%'}<small>${N(p.px_end)} → ${N(p.close)}</small></td>
 <td>${N(p.avg_price)}<small>${d==null?'&nbsp;':'현재가 '+S(d)+'%'}</small></td></tr>`}
   h+='</tbody></table>';
-  $('#view').innerHTML=rows.length?h:'<div class="empty">조건에 맞는 프로그램이 없습니다.</div>';
-  $('#legend').innerHTML=`<span>${rows.length}건 표시</span><span>종료 후 주가는 마지막 매입일(또는 기한일) 종가 대비 최근 종가의 등락률입니다</span>`;
+  $('#view').innerHTML=rows.length?h:`<div class="empty">조건에 맞는 프로그램이 없습니다.${elsewhere()}</div>`;
+  $('#legend').innerHTML=`<span>${rows.length}건 표시</span>${capNote(DB.ended)}<span>종료 후 주가는 마지막 매입일(또는 기한일) 종가 대비 최근 종가의 등락률입니다</span>`;
   bindTable('ended');
 }
 function renderFeed(){
